@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clicker Game</title>
+    <title>Notcoin Clicker Game</title>
     <style>
         body {
             display: flex;
@@ -14,34 +14,76 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
-        #score {
+        #counter {
             font-size: 2em;
             margin-bottom: 20px;
         }
         #clickButton {
-            padding: 15px 30px;
+            padding: 10px 20px;
             font-size: 1.5em;
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
         }
-        #clickButton:hover {
-            background-color: #005f73;
+        #upgradeButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
-    <button id="clickButton" onclick="incrementScore()">Click me!</button>
+    <div id="counter">0 Notcoins</div>
+    <button id="clickButton">Mine Notcoin</button>
+    <button id="upgradeButton">Upgrade (+1 per click)</button>
 
     <script>
-        let score = 0;
-        function incrementScore() {
-            score++;
-            document.getElementById('score').innerText = 'Score: ' + score;
-        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const counter = document.getElementById('counter');
+            const clickButton = document.getElementById('clickButton');
+            const upgradeButton = document.getElementById('upgradeButton');
+
+            let notcoinCount = localStorage.getItem('notcoinCount') ? parseInt(localStorage.getItem('notcoinCount')) : 0;
+            let clickValue = localStorage.getItem('clickValue') ? parseInt(localStorage.getItem('clickValue')) : 1;
+            let upgradeCost = localStorage.getItem('upgradeCost') ? parseInt(localStorage.getItem('upgradeCost')) : 50;
+
+            counter.innerText = `${notcoinCount} Notcoins`;
+
+            if (notcoinCount >= upgradeCost) {
+                upgradeButton.style.display = 'inline-block';
+            }
+
+            clickButton.addEventListener('click', () => {
+                notcoinCount += clickValue;
+                counter.innerText = `${notcoinCount} Notcoins`;
+                localStorage.setItem('notcoinCount', notcoinCount);
+
+                if (notcoinCount >= upgradeCost) {
+                    upgradeButton.style.display = 'inline-block';
+                }
+            });
+
+            upgradeButton.addEventListener('click', () => {
+                if (notcoinCount >= upgradeCost) {
+                    notcoinCount -= upgradeCost;
+                    clickValue += 1;
+                    upgradeCost *= 2;
+
+                    counter.innerText = `${notcoinCount} Notcoins`;
+                    upgradeButton.innerText = `Upgrade (+${clickValue} per click) - Cost: ${upgradeCost} Notcoins`;
+
+                    localStorage.setItem('notcoinCount', notcoinCount);
+                    localStorage.setItem('clickValue', clickValue);
+                    localStorage.setItem('upgradeCost', upgradeCost);
+
+                    if (notcoinCount < upgradeCost) {
+                        upgradeButton.style.display = 'none';
+                    }
+                }
+            });
+
+            upgradeButton.innerText = `Upgrade (+${clickValue} per click) - Cost: ${upgradeCost} Notcoins`;
+        });
     </script>
 </body>
 </html>

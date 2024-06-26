@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>Welcome to the Web3 Game!</h1>
+    <button id="playButton">Play</button>
+
+    <script>
+        document.getElementById('playButton').onclick = async function() {
+            if (window.ethereum) {
+                try {
+                    await ethereum.request({ method: 'eth_requestAccounts' });
+                    const web3 = new Web3(window.ethereum);
+                    const accounts = await web3.eth.getAccounts();
+                    alert('Connected to account: ' + accounts[0]);
+                    // Your game logic here
+                } catch (error) {
+                    console.error("User denied account access")
+                }
+            } else {
+                console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            }
+        };
+    </script>
+</body>
+</html>
